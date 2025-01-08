@@ -19,7 +19,7 @@ start_klippy() {
   docker run \
     --privileged \
     --name klipper \
-    -v /dev:/dev
+    -v /dev:/dev \
     -v $(pwd)/run:/opt/printer_data/run \
     -v $(pwd)/gcode:/opt/printer_data/gcodes \
     -v $(pwd)/printer.cfg:/opt/printer_data/config/printer.cfg \
