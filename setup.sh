@@ -15,6 +15,8 @@ stop_container() {
 
 # --- KLIPPER ---
 
+#docker build --no-cache --target run --tag 'michal/klipper' .
+
 start_klippy() {
   docker run \
     --privileged \
@@ -23,7 +25,7 @@ start_klippy() {
     -v $(pwd)/run:/opt/printer_data/run \
     -v $(pwd)/gcode:/opt/printer_data/gcodes \
     -v $(pwd)/printer.cfg:/opt/printer_data/config/printer.cfg \
-    mkuf/klipper:latest
+    michal/klipper:latest
 }
 
 stop_klippy() {
