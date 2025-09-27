@@ -27,6 +27,7 @@ start_klippy() {
 }
 
 stop_klippy() {
+  echo "Stopping Klipper!"
   stop_container "klipper"
 }
 
@@ -45,6 +46,7 @@ start_moonraker() {
 }
 
 stop_moonraker() {
+  echo "Stopping Moonraker!"
   stop_container "moonraker"
 }
 
