@@ -1,0 +1,3 @@
+[submodule "prind"]
+	path = prind
+	url = https://github.com/mkuf/prind
