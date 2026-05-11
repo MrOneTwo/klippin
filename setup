@@ -20,12 +20,15 @@ stop_container() {
 DOCKERFILE_PATH=./prind/docker/klipper/
 #DOCKER_LABEL=mkuf/klipper:latest
 DOCKER_LABEL=michal/klipper
-DOCKER_TARGET=build-simulavr
+DOCKER_TARGET=run
 start_klippy() {
   # Using target 'run' for actual printer connection.
   docker build \
-    -t michal/klipper \
+    --no-cache \
+    -t $DOCKER_LABEL \
+    --build-arg REPO=https://github.com/MrOneTwo/klipper.git \
     --target $DOCKER_TARGET \
+    --progress=plain \
     $DOCKERFILE_PATH
 
   docker run \
@@ -35,7 +38,7 @@ start_klippy() {
     -v $(pwd)/run:/opt/printer_data/run \
     -v $(pwd)/gcode:/opt/printer_data/gcodes \
     -v $(pwd)/printer.cfg:/opt/printer_data/config/printer.cfg \
-    michal/klipper
+    $DOCKER_LABEL
 }
 
 stop_klippy() {
