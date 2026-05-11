@@ -1,0 +1,39 @@
+diff --git a/docker/klipper/Dockerfile b/docker/klipper/Dockerfile
+index 6fad41c..3d53a6c 100644
+--- a/docker/klipper/Dockerfile
++++ b/docker/klipper/Dockerfile
+@@ -8,6 +8,14 @@ RUN apt update \
+  && apt install -y cmake \
+  && apt clean
+ 
++# Build libcoap
++RUN git clone https://github.com/obgm/libcoap \
++ && cd libcoap && mkdir build && cd build \
++ && cmake .. -DENABLE_EXAMPLES=OFF -DENABLE_DOCS=OFF -DBUILD_SHARED_LIBS=ON \
++ && make \
++ && make install DESTDIR=/tmp/libcoap_package \
++ && cat install_manifest.txt
++
+ WORKDIR /opt
+ COPY requirements-prind.txt .
+ 
+@@ -46,10 +54,18 @@ COPY --chown=klipper:klipper health.py ./
+ COPY --chown=klipper:klipper --from=build /opt/klipper ./klipper
+ COPY --chown=klipper:klipper --from=build /opt/venv ./venv
+ 
++RUN apt update \
++ && apt install -y libgnutls30 \
++ && apt clean
++COPY --chown=klipper:klipper --from=build /tmp/libcoap_package /
++RUN echo '/usr/local/lib' > /etc/ld.so.conf.d/libcoap.conf
++RUN ldconfig
++ENV LIBCOAP_PATH="/usr/local/lib/libcoap-3.so.3.2.2"
++
+ USER klipper
+ VOLUME ["/opt/printer_data/run", "/opt/printer_data/gcodes", "/opt/printer_data/logs", "/opt/printer_data/config"]
+ ENTRYPOINT ["/opt/venv/bin/python", "klipper/klippy/klippy.py"]
+-CMD ["-I", "printer_data/run/klipper.tty", "-a", "printer_data/run/klipper.sock", "printer_data/config/printer.cfg"]
++CMD ["-I", "printer_data/run/klipper.tty", "-a", "/tmp/klippy_uds", "printer_data/config/printer.cfg", "-l", "/tmp/klippy.log"]
+ ###
+ 
+ 
